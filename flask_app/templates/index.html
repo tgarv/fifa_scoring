@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+    <title>FIFA Results</title>
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#player_results').dataTable({"paging": false, "searching": false, "order": [1, "desc"]});
+        } );
+        $(document).ready(function() {
+            $('#team_results').dataTable({"paging": false, "searching": false, "order": [1, "desc"]});
+        } );
+    </script>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='jquery.dataTables.css') }}">
+    <style>
+        .table_wrapper {width: 40%};
+        .fl {float: left;}
+        .fr {float: right;}
+    </style>
+</head>
+<body>
+    <div class="table_wrapper">
+    <table id="player_results" class="display fl" cellspacing="0">
+        <caption>Indvidual Player Records</caption>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Ties</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in player_results %}
+            <tr>
+                <td>{{player[0]}}</td>
+                <td>{{player[1]}}</td>
+                <td>{{player[2]}}</td>
+                <td>{{player[3]}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <div class="table_wrapper">
+    <table id="team_results" class="display fl" cellspacing="0">
+        <caption>Team Records</caption>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Ties</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team in team_results %}
+            <tr>
+                <td>{{team[0]}}</td>
+                <td>{{team[1]}}</td>
+                <td>{{team[2]}}</td>
+                <td>{{team[3]}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</body>
+</html>
