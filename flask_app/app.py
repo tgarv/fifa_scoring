@@ -45,7 +45,7 @@ def create_app(settings_key='dev'):
             sql = "INSERT INTO home_players (game_id, player_name) VALUES (?, ?)";
             cursor.execute(sql, (game_id, player))
         conn.commit()
-        return "here"
+        return main()
 
     def get_connection():
         path = os.path.dirname(os.path.abspath(__file__))
