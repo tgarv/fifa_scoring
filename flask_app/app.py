@@ -48,7 +48,9 @@ def create_app(settings_key='dev'):
         return "here"
 
     def get_cursor():
-        return sqlite3.connect('/home/ubuntu/workspace/scores.db').cursor()
+        path = os.path.dirname(os.path.abspath(__file__))
+        print path
+        return sqlite3.connect(path + '/../scores.db').cursor()
 
     def deduplicate_game_players(game_history):
         return_value = []
