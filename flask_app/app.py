@@ -79,4 +79,5 @@ def create_app(settings_key='dev'):
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(host=os.getenv('IP', '0.0.0.0'),port=int(os.getenv('PORT', 8080)))
+    app.run()
+    # app.run(host=os.getenv('IP', '0.0.0.0'),port=int(os.getenv('PORT', 8080)))
