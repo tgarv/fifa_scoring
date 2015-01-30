@@ -30,7 +30,7 @@ def create_app(settings_key='dev'):
     @app.route('/add_game', methods=['POST'])
     def add_game():
         print request.form
-        conn = sqlite3.connect('/home/ubuntu/workspace/scores.db')
+        conn = get_connection()
         cursor = conn.cursor()
         # print (request.form['date'], request.form['away_team'], request.form['home_team'], request.form['away_score'], request.form['home_score'], request.form['half_length'])
         sql = "INSERT INTO game (date, away_team, home_team, away_score, home_score, half_length) VALUES (?, ?, ?, ?, ?, ?);"
@@ -47,10 +47,12 @@ def create_app(settings_key='dev'):
         conn.commit()
         return "here"
 
-    def get_cursor():
+    def get_connection():
         path = os.path.dirname(os.path.abspath(__file__))
-        print path
-        return sqlite3.connect(path + '/../scores.db').cursor()
+        return sqlite3.connect(path + '/../scores.db')
+
+    def get_cursor():
+        return get_connection().cursor()
 
     def deduplicate_game_players(game_history):
         return_value = []
