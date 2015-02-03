@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
-import sqlite3
 import queries
 import json
+import MySQLdb as db
 
 def create_app(settings_key='dev'):
     app = Flask(__name__)
@@ -38,18 +38,17 @@ def create_app(settings_key='dev'):
         game_id = cursor.lastrowid
         away_players = request.form['away_players'].split(',')
         for player in away_players:
-            sql = "INSERT INTO away_players (game_id, player_name) VALUES (?, ?)";
+            sql = "INSERT INTO away_players (game_id, player_name) VALUES (%s, %s)";
             cursor.execute(sql, (game_id, player))
         home_players = request.form['home_players'].split(',')
         for player in home_players:
-            sql = "INSERT INTO home_players (game_id, player_name) VALUES (?, ?)";
+            sql = "INSERT INTO home_players (game_id, player_name) VALUES (%s, %s)";
             cursor.execute(sql, (game_id, player))
         conn.commit()
         return main()
 
     def get_connection():
-        path = os.path.dirname(os.path.abspath(__file__))
-        return sqlite3.connect(path + '/../scores.db')
+        return db.connect('us-cdbr-iron-east-01.cleardb.net', 'b6a8bbd0db6ff6', '02c55634', 'heroku_4257da2e9f87a35')
 
     def get_cursor():
         return get_connection().cursor()
