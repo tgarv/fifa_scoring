@@ -3,6 +3,7 @@ import os
 import queries
 import json
 import MySQLdb as db
+from datetime import date
 
 def create_app(settings_key='dev'):
     app = Flask(__name__)
@@ -15,21 +16,20 @@ def create_app(settings_key='dev'):
 
     @app.route('/')
     def main():
+        start_date = request.args.get('start_date', '0')
+        end_date = request.args.get('end_date', 'Z')
         cursor = get_cursor()
-        cursor.execute(queries.player_game_results_query)
+        cursor.execute(queries.player_game_results_query, (start_date, end_date))
         player_results = cursor.fetchall()
-        cursor.execute(queries.team_results_query)
+        cursor.execute(queries.team_results_query, (start_date, end_date))
         team_results = cursor.fetchall();
-        cursor.execute(queries.game_history_query)
+        cursor.execute(queries.game_history_query, (start_date, end_date))
         game_history = cursor.fetchall()
         game_history = deduplicate_game_players(game_history)
-        print game_history
         return render_template('index.html', player_results=player_results, team_results=team_results, game_history=game_history)
-        return json.dumps({'player_results': str(player_results), 'team_results': str(team_results)})
 
     @app.route('/add_game', methods=['POST'])
     def add_game():
-        print request.form
         conn = get_connection()
         cursor = conn.cursor()
         # print (request.form['date'], request.form['away_team'], request.form['home_team'], request.form['away_score'], request.form['home_score'], request.form['half_length'])
@@ -52,6 +52,10 @@ def create_app(settings_key='dev'):
 
     def get_cursor():
         return get_connection().cursor()
+
+    def get_first_day_of_week():
+        today = date.today()
+        return today + datetime.timedelta(days=(0-today.weekday()))
 
     def deduplicate_game_players(game_history):
         return_value = []

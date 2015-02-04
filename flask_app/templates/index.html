@@ -2,25 +2,14 @@
 <html lang="en">
 <head>
     <title>FIFA Results</title>
-    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#player_results').dataTable({"paging": false, "searching": false, "order": [2, "desc"], "autoWidth": true});
-            $('#team_results').dataTable({"paging": false, "searching": false, "order": [2, "desc"], "autoWidth": true});
-            $('#game_history').dataTable({"paging": false, "searching": false, "order": [0, "desc"], "autoWidth": true});
-        } );
-    </script>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='jquery.dataTables.css') }}">
-    <style>
-        .table_wrapper {width: 80%;}
-        .fl {float: left;}
-        .fr {float: right;}
-        .form_spacer {width: 250px;}
-    </style>
+    <script src="{{ url_for('static', filename='scripts/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/main.js') }}"></script>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/main.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/jquery.dataTables.css') }}">
 </head>
 <body>
-    <a href="im:<sip:jparsons@wayfair.com><sip:aballantine@wayfair.com><sip:thare@wayfair.com>">Open Game IM</a>
+    <!--<a href="im:<sip:jparsons@wayfair.com><sip:aballantine@wayfair.com><sip:thare@wayfair.com>">Open Game IM</a>-->
     <table id="game_history" class="display fl" cellspacing="0" width="90%">
         <caption>Game History</caption>
         <thead>
