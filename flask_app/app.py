@@ -33,7 +33,7 @@ def create_app(settings_key='dev'):
         conn = get_connection()
         cursor = conn.cursor()
         # print (request.form['date'], request.form['away_team'], request.form['home_team'], request.form['away_score'], request.form['home_score'], request.form['half_length'])
-        sql = "INSERT INTO game (date, away_team, home_team, away_score, home_score, half_length) VALUES (?, ?, ?, ?, ?, ?);"
+        sql = "INSERT INTO game (date, away_team, home_team, away_score, home_score, half_length) VALUES (%s, %s, %s, %s, %s, %s);"
         cursor.execute(sql, (request.form['date'], request.form['away_team'], request.form['home_team'], request.form['away_score'], request.form['home_score'], request.form['half_length']))
         game_id = cursor.lastrowid
         away_players = request.form['away_players'].split(',')
