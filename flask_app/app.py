@@ -30,7 +30,8 @@ def create_app(settings_key='dev'):
         cursor.execute(queries.game_history_query, (start_date, end_date))
         game_history = cursor.fetchall()
         game_history = deduplicate_game_players(game_history)
-        return render_template('index.html', player_results=player_results, team_results=team_results, game_history=game_history)
+        gc.populate(game_history)
+        return render_template('index.html', player_results=player_results, team_results=team_results, game_history=gc)
 
     @app.route('/add_game', methods=['POST'])
     def add_game():

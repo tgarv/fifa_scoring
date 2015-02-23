@@ -9,3 +9,5 @@ class GameModel(BaseModel):
         self.home_score = 0
         self.half_length = 0
         self.date = ''
+        self.home_players = ''
+        self.away_players = ''
