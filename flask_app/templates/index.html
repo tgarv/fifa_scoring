@@ -73,18 +73,18 @@
         <tbody>
             {% for player in player_results %}
             <tr>
-                <td>{{player[0]}}</td>
-                <td>{{player[1]}}</td>
-                <td>{{player[11]|round(2)}}</td>
-                <td>{{player[2]}}</td>
-                <td>{{player[3]}}</td>
-                <td>{{player[4]}}</td>
-                <td>{{player[5]}}</td>
-                <td>{{player[6]|round(2)}}</td>
-                <td>{{player[7]}}</td>
-                <td>{{player[8]|round(2)}}</td>
-                <td>{{player[9]}}</td>
-                <td>{{player[10]|round(2)}}</td>
+                <td>{{player['name']}}</td>
+                <td>{{player['games_played']}}</td>
+                <td>{{player['winning_percentage']|round(2)}}</td>
+                <td>{{player['wins']}}</td>
+                <td>{{player['losses']}}</td>
+                <td>{{player['ties']}}</td>
+                <td>{{player['score']}}</td>
+                <td>{{player['average_score']|round(2)}}</td>
+                <td>{{player['opponent_score']}}</td>
+                <td>{{player['average_opponent_score']|round(2)}}</td>
+                <td>{{player['goal_differential']}}</td>
+                <td>{{player['average_goal_differential']|round(2)}}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -112,18 +112,18 @@
         <tbody>
             {% for team in team_results %}
             <tr>
-                <td>{{team[0]}}</td>
-                <td>{{team[1]}}</td>
-                <td>{{team[11]|round(2)}}</td>
-                <td>{{team[2]}}</td>
-                <td>{{team[3]}}</td>
-                <td>{{team[4]}}</td>
-                <td>{{team[5]}}</td>
-                <td>{{team[6]|round(2)}}</td>
-                <td>{{team[7]}}</td>
-                <td>{{team[8]|round(2)}}</td>
-                <td>{{team[9]}}</td>
-                <td>{{team[10]|round(2)}}</td>
+                <td>{{team['team_players']}}</td>
+                <td>{{team['games_played']}}</td>
+                <td>{{team['winning_percentage']|round(2)}}</td>
+                <td>{{team['wins']}}</td>
+                <td>{{team['losses']}}</td>
+                <td>{{team['ties']}}</td>
+                <td>{{team['score']}}</td>
+                <td>{{team['average_score']|round(2)}}</td>
+                <td>{{team['opponent_score']}}</td>
+                <td>{{team['average_opponent_score']|round(2)}}</td>
+                <td>{{team['goal_differential']}}</td>
+                <td>{{team['average_goal_differential']|round(2)}}</td>
             </tr>
             {% endfor %}
         </tbody>

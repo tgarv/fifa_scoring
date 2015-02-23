@@ -30,10 +30,10 @@ SELECT  name,
         SUM(win) as wins,
         SUM(loss) as losses,
         SUM(tie) as ties,
-        SUM(score),
-        AVG(score),
-        SUM(opponent_score),
-        AVG(opponent_score),
+        SUM(score) as score,
+        AVG(score) as average_score,
+        SUM(opponent_score) as opponent_score,
+        AVG(opponent_score) as average_opponent_score,
         SUM(score) - SUM(opponent_score) as goal_differential,
         (SUM(score) - SUM(opponent_score)) * 1.0 / COUNT(*) as average_goal_differential,
         SUM(win) * 1.0 / (SUM(win) + SUM(loss) + SUM(tie)) as winning_percentage
@@ -114,10 +114,10 @@ GROUP BY team_players;"""
 # but I'm fixing it in the python code
 game_history_query = """
 SELECT  date,
-        group_concat(hp.player_name SEPARATOR '-'),
+        group_concat(hp.player_name SEPARATOR '-') as home_players,
         home_team,
         home_score,
-        group_concat(ap.player_name SEPARATOR '-'),
+        group_concat(ap.player_name SEPARATOR '-') as away_players,
         away_team,
         away_score
 FROM game

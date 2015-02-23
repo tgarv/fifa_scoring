@@ -3,7 +3,9 @@ import os
 import queries
 import json
 import MySQLdb as db
+import MySQLdb.cursors
 from datetime import date
+from flask_app.models.game_collection import GameCollection
 
 def create_app(settings_key='dev'):
     app = Flask(__name__)
@@ -16,11 +18,13 @@ def create_app(settings_key='dev'):
 
     @app.route('/')
     def main():
+        gc = GameCollection()
         start_date = request.args.get('start_date', '0')
         end_date = request.args.get('end_date', 'Z')
         cursor = get_cursor()
         cursor.execute(queries.player_game_results_query, (start_date, end_date))
         player_results = cursor.fetchall()
+        print player_results[0]
         cursor.execute(queries.team_results_query, (start_date, end_date))
         team_results = cursor.fetchall();
         cursor.execute(queries.game_history_query, (start_date, end_date))
@@ -48,7 +52,7 @@ def create_app(settings_key='dev'):
         return main()
 
     def get_connection():
-        return db.connect('us-cdbr-iron-east-01.cleardb.net', 'b6a8bbd0db6ff6', '02c55634', 'heroku_4257da2e9f87a35')
+        return db.connect('us-cdbr-iron-east-01.cleardb.net', 'b6a8bbd0db6ff6', '02c55634', 'heroku_4257da2e9f87a35', cursorclass=MySQLdb.cursors.DictCursor)
 
     def get_cursor():
         return get_connection().cursor()
@@ -58,20 +62,21 @@ def create_app(settings_key='dev'):
         return today + datetime.timedelta(days=(0-today.weekday()))
 
     def deduplicate_game_players(game_history):
+        print game_history
         return_value = []
         for game in game_history:
             game_dict = {
-                'date': game[0],
-                'home_players': game[1],
-                'home_team': game[2],
-                'home_score': game[3],
-                'away_players': game[4],
-                'away_team': game[5],
-                'away_score': game[6]
+                'date': game['date'],
+                'home_players': game['home_players'],
+                'home_team': game['home_team'],
+                'home_score': game['home_score'],
+                'away_players': game['away_players'],
+                'away_team': game['away_team'],
+                'away_score': game['away_score']
                 }
 
-            home_players = game[1]
-            away_players = game[4]
+            home_players = game['home_players']
+            away_players = game['away_players']
             # Turn these into sets to deduplicate the names.
             # This is obviously a hack, I should actually fix the query.
             home_players = set(home_players.split('-'))
