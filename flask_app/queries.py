@@ -35,7 +35,8 @@ SELECT  name,
         SUM(opponent_score),
         AVG(opponent_score),
         SUM(score) - SUM(opponent_score) as goal_differential,
-        (SUM(score) - SUM(opponent_score)) * 1.0 / COUNT(*) as average_goal_differential
+        (SUM(score) - SUM(opponent_score)) * 1.0 / COUNT(*) as average_goal_differential,
+        SUM(win) * 1.0 / (SUM(win) + SUM(loss) + SUM(tie)) as winning_percentage
 FROM
     (SELECT player_name as name,
             home_score as score,
@@ -61,6 +62,7 @@ FROM
     ) p
     WHERE date BETWEEN %s AND %s
     GROUP BY name;"""
+
 team_results_query = """
 SELECT  team_players,
         COUNT(*) as games_played,
@@ -72,7 +74,8 @@ SELECT  team_players,
         SUM(opponent_score) as opponent_score,
         AVG(opponent_score) as average_opponent_score,
         SUM(score) - SUM(opponent_score) as goal_differential,
-        (SUM(score) - SUM(opponent_score)) * 1.0 / COUNT(*) as average_goal_differential
+        (SUM(score) - SUM(opponent_score)) * 1.0 / COUNT(*) as average_goal_differential,
+        SUM(win) * 1.0 / (SUM(win) + SUM(loss) + SUM(tie)) as winning_percentage
 FROM
     (SELECT group_concat(player_name SEPARATOR '-') as team_players,
             away_score as score,
