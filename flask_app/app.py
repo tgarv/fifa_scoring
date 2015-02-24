@@ -14,25 +14,24 @@ def create_app(settings_key='dev'):
 
     @app.route('/')
     def main():
-        gc = GameCollection()
         start_date = request.args.get('start_date', '0')
         end_date = request.args.get('end_date', 'Z')
         cursor = get_cursor()
-        cursor.execute(queries.player_game_results_query, (start_date, end_date))
-        player_results = cursor.fetchall()
-        print player_results[0]
+
         cursor.execute(queries.team_results_query, (start_date, end_date))
         team_results = cursor.fetchall();
         cursor.execute(queries.game_history_query, (start_date, end_date))
         game_history = cursor.fetchall()
         game_history = deduplicate_game_players(game_history)
+        gc = GameCollection()
         gc.populate(game_history)
-        print len(gc.filter_by_players(['DT','Jon','Alistair','CT']).models)
-        print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
-        print len(gc.filter_by_players(['CT'], False).models)
-        print len(gc.filter_by_players(['Jon', 'CT'], False).models)
-        gc.compute_stats()
-        return render_template('index.html', player_results=player_results, team_results=team_results, game_history=gc)
+        # print len(gc.filter_by_players(['DT','Jon','Alistair','CT']).models)
+        # print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
+        # print len(gc.filter_by_players(['CT'], False).models)
+        # print len(gc.filter_by_players(['Jon', 'CT'], False).models)
+        stats = gc.compute_player_stats()
+
+        return render_template('index.html', player_results=stats['player_stats'], team_results=stats['team_stats'], game_history=gc)
 
     @app.route('/add_game', methods=['POST'])
     def add_game():
@@ -68,7 +67,6 @@ def create_app(settings_key='dev'):
         return today + datetime.timedelta(days=(0-today.weekday()))
 
     def deduplicate_game_players(game_history):
-        print game_history
         return_value = []
         for game in game_history:
             game_dict = {
@@ -90,6 +88,7 @@ def create_app(settings_key='dev'):
             game_dict['home_players'] = '/'.join(home_players)
             game_dict['away_players'] = '/'.join(away_players)
             return_value.append(game_dict)
+
         return return_value
 
     return app
