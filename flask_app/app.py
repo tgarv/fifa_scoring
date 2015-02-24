@@ -27,6 +27,10 @@ def create_app(settings_key='dev'):
         game_history = cursor.fetchall()
         game_history = deduplicate_game_players(game_history)
         gc.populate(game_history)
+        print len(gc.filter_by_players(['DT','Jon','Alistair','CT']).models)
+        print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
+        print len(gc.filter_by_players(['CT'], False).models)
+        print len(gc.filter_by_players(['Jon', 'CT'], False).models)
         return render_template('index.html', player_results=player_results, team_results=team_results, game_history=gc)
 
     @app.route('/add_game', methods=['POST'])

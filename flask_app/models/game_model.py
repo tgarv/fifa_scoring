@@ -11,6 +11,3 @@ class GameModel(BaseModel):
         self.date = ''
         self.home_players = ''
         self.away_players = ''
-
-    def filter(self, filter_args):
-        pass
