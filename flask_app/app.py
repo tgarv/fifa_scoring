@@ -31,6 +31,7 @@ def create_app(settings_key='dev'):
         print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
         print len(gc.filter_by_players(['CT'], False).models)
         print len(gc.filter_by_players(['Jon', 'CT'], False).models)
+        gc.compute_stats()
         return render_template('index.html', player_results=player_results, team_results=team_results, game_history=gc)
 
     @app.route('/add_game', methods=['POST'])
