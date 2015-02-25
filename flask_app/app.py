@@ -16,6 +16,7 @@ def create_app(settings_key='dev'):
     def main():
         start_date = request.args.get('start_date', '0')
         end_date = request.args.get('end_date', 'Z')
+        all_players = request.args.get('all_players', False)
         cursor = get_cursor()
 
         cursor.execute(queries.team_results_query, (start_date, end_date))
@@ -25,6 +26,8 @@ def create_app(settings_key='dev'):
         game_history = deduplicate_game_players(game_history)
         gc = GameCollection()
         gc.populate(game_history)
+        if all_players:
+            gc = gc.filter_by_players(['DT','Jon','Alistair','CT'])
         # print len(gc.filter_by_players(['DT','Jon','Alistair','CT']).models)
         # print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
         # print len(gc.filter_by_players(['CT'], False).models)
