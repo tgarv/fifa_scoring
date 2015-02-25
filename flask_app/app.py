@@ -70,7 +70,7 @@ def create_app(settings_key='dev'):
 
     @app.route('/test')
     def test():
-        return render_template('test.html')
+        return render_template('test.html', all_players=request.args.get('all_players', False))
 
     def get_connection():
         return db.connect('us-cdbr-iron-east-01.cleardb.net', 'b6a8bbd0db6ff6', '02c55634', 'heroku_4257da2e9f87a35', cursorclass=MySQLdb.cursors.DictCursor)

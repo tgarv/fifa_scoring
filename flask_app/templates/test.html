@@ -9,8 +9,12 @@
         	var cachedData;
 	    	var graphData = function(field, field_label) {
 		       	if (!cachedData) {
+		       		var url = "{{ url_for('.get_weekly_stats') }}";
+					{% if all_players %}
+				        url += "?all_players=true";
+				    {% endif %}
 			        $.ajax(
-			        	{url: "{{ url_for('.get_weekly_stats') }}",
+			        	{url: url,
 			        	success: function(data) {
 			        		data = JSON.parse(data);
 			        		cachedData = data;
@@ -81,6 +85,6 @@
 		<option value="goal_differential" data-label="Goal Differential">Goal Differential</option>
 		<option value="goal_differential_per_game" data-label="Goal Differential Per Game">Goal Differential Per Game</option>
 	</select>
-    <div id="placeholder" style="width:900px;height:450px"></div>
+    <div id="placeholder" style="width:800px;height:400px"></div>
 </body>
 </html>
