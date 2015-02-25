@@ -6,46 +6,81 @@
     <script src="{{ url_for('static', filename='scripts/jquery.flot.js') }}"></script>
     <script type="text/javascript">
         $(function () {
-		var d1 = [];
-		for (var i = 0; i < Math.PI * 2; i += 0.25) {
-			d1.push([i, Math.sin(i)]);
-		}
+        	var cachedData;
+	    	var graphData = function(field, field_label) {
+		       	if (!cachedData) {
+			        $.ajax(
+			        	{url: "{{ url_for('.get_weekly_stats') }}",
+			        	success: function(data) {
+			        		data = JSON.parse(data);
+			        		cachedData = data;
+			        		console.log(data);
+			        		drawGraph(cachedData, field, field_label);
+			        		}
+			        	});
+		       	} else {
+		       		drawGraph(cachedData, field, field_label);
+		       	}
 
-		$.plot("#placeholder", [
-			{ label: "sin(x)", data: d1 }
-		], {
-			series: {
-				lines: { show: true },
-				points: { show: true }
-			},
-			xaxis: {
-				ticks: [
-					0, [ Math.PI/2, "\u03c0/2" ], [ Math.PI, "\u03c0" ],
-					[ Math.PI * 3/2, "3\u03c0/2" ], [ Math.PI * 2, "2\u03c0" ]
-				]
-			},
-			yaxis: {
-				ticks: 10,
-				min: -2,
-				max: 2,
-				tickDecimals: 3
-			},
-			grid: {
-				backgroundColor: { colors: [ "#fff", "#eee" ] },
-				borderWidth: {
-					top: 1,
-					right: 1,
-					bottom: 2,
-					left: 2
+	    	}
+
+	    	var drawGraph = function(data, field, field_label) {
+	    		console.log(data);
+	    		var date_labels = [];
+		       	var weekly_data = {};
+	    		data.forEach(function(e, i) {
+    				console.log(e.start_date);
+    				date_labels.push([e.start_date]);
+    				// console.log(e.stats.player_stats);
+    				e.stats.player_stats.forEach(function(player) {
+    					var label = player.name + ' ' + field_label;
+    					if (!(weekly_data.hasOwnProperty(label))) {
+    						weekly_data[label] = [];
+    					}
+    					weekly_data[label].push([i, player[field]]);
+    				});
+    			});
+
+    			var graph_data = [];
+    			console.log(weekly_data);
+    			for (var label in weekly_data) {
+					if (weekly_data.hasOwnProperty(label)) {
+						graph_data.push({label: label, data: weekly_data[label]});
+					}
 				}
-			}
+    			var ticks = [];
+    			for (var i = 0; i < date_labels.length; i++) {
+    				ticks.push([i, date_labels[i]]);
+    			}
+
+				$.plot("#placeholder", graph_data, {
+					xaxis: {
+						ticks: ticks
+					},
+				});
+	    	}
+
+	    	graphData("wins", "Wins");
+
+	    	$("#stat_selector").on('change', function(e) {
+	    		var selected = $('#stat_selector option:selected');
+	    		graphData(selected.val(), selected.attr('data-label'));
+	    	});
 		});
-		// Add the Flot version string to the footer
-		$("#footer").prepend("Flot " + $.plot.version + " &ndash; ");
-	});
     </script>
 </head>
 <body>
-    <div id="placeholder" style="width:600px;height:300px"></div>
+	<select id="stat_selector">
+		<option value="wins" data-label="Wins">Wins</option>
+		<option value="total_games" data-label="Total Games">Total Games</option>
+		<option value="winning_percentage" data-label="Winning Percentage">Winning Percentage</option>
+		<option value="goals" data-label="Goals">Goals</option>
+		<option value="goals_per_game" data-label="Goals Per Game">Goals Per Game</option>
+		<option value="goals_against" data-label="Goals Against">Goals Against</option>
+		<option value="goals_against_per_game" data-label="Goals Against Per Game">Goals Against Per Game</option>
+		<option value="goal_differential" data-label="Goal Differential">Goal Differential</option>
+		<option value="goal_differential_per_game" data-label="Goal Differential Per Game">Goal Differential Per Game</option>
+	</select>
+    <div id="placeholder" style="width:900px;height:450px"></div>
 </body>
 </html>

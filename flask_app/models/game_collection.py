@@ -1,4 +1,5 @@
 from flask_app.models.game_model import GameModel
+import datetime
 
 class GameCollection():
     def __init__(self):
@@ -51,10 +52,10 @@ class GameCollection():
             team_names.add(','.join(sorted(model.home_players)))
 
         for name in team_names:
-            team_results[name] = {'wins': 0, 'losses': 0, 'ties': 0, 'goals': 0, 'goals_against': 0}
+            team_results[name] = {'name': name, 'wins': 0, 'losses': 0, 'ties': 0, 'goals': 0, 'goals_against': 0}
 
         for name in player_names:
-            player_results[name] = {'wins': 0, 'losses': 0, 'ties': 0, 'goals': 0, 'goals_against': 0}
+            player_results[name] = {'name': name, 'wins': 0, 'losses': 0, 'ties': 0, 'goals': 0, 'goals_against': 0}
 
         for model in self.models:
             winning_players = []
@@ -126,4 +127,48 @@ class GameCollection():
                 group[name]['goal_differential']          = goal_differential
                 group[name]['goal_differential_per_game'] = goal_differential_per_game
 
-        return {'player_stats': player_results, 'team_stats': team_results}
+        player_results_list = []
+        team_results_list = []
+        for item in player_results.values():
+            player_results_list.append(item)
+
+        for item in team_results.values():
+            team_results_list.append(item)
+
+        return {'player_stats': player_results_list, 'team_stats': team_results_list}
+
+    def filter_by_date(self, start_date='0', end_date='Z'):
+        new_models = []
+        for model in self.models:
+            if model.date >= start_date and model.date < end_date:
+                new_models.append(model)
+
+        gc = GameCollection()
+        gc.models = new_models
+        return gc
+
+    def get_weekly_stats(self):
+        weekly_stats = []
+        today = datetime.date.today()
+        start_date = today + datetime.timedelta(days=(0-today.weekday()))
+        start_date_string = start_date.isoformat()
+        end_date = None
+        end_date_string = 'Z'
+
+        new_collection = self.filter_by_date(start_date_string, end_date_string)
+        stats = new_collection.compute_player_stats()
+        weekly_stats.append({'start_date': start_date_string, 'end_date': 'Now', 'stats': stats})
+
+        for i in xrange(6): #6 weeks
+            end_date = start_date
+            start_date = start_date - datetime.timedelta(days=7)
+            end_date_string = end_date.isoformat()
+            start_date_string = start_date.isoformat()
+            new_collection = self.filter_by_date(start_date_string, end_date_string)
+            stats = new_collection.compute_player_stats()
+
+            weekly_stats.append({'start_date': start_date_string, 'end_date': end_date_string, 'stats': stats})
+
+        # Go from past to present
+        weekly_stats = weekly_stats[::-1]
+        return weekly_stats

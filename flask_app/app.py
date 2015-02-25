@@ -33,6 +33,22 @@ def create_app(settings_key='dev'):
 
         return render_template('index.html', player_results=stats['player_stats'], team_results=stats['team_stats'], game_history=gc)
 
+    @app.route('/get_weekly_stats')
+    def get_weekly_stats():
+        start_date = request.args.get('start_date', '0')
+        end_date = request.args.get('end_date', 'Z')
+        cursor = get_cursor()
+        cursor.execute(queries.game_history_query, (start_date, end_date))
+        game_history = cursor.fetchall()
+        game_history = deduplicate_game_players(game_history)
+        gc = GameCollection()
+        gc.populate(game_history)
+        print request.args
+        if request.args.get('all_players', False):
+            gc = gc.filter_by_players(['DT','Jon','Alistair','CT'])
+
+        return json.dumps(gc.get_weekly_stats())
+
     @app.route('/add_game', methods=['POST'])
     def add_game():
         conn = get_connection()
