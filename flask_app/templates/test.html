@@ -18,7 +18,6 @@
 			        	success: function(data) {
 			        		data = JSON.parse(data);
 			        		cachedData = data;
-			        		console.log(data);
 			        		drawGraph(cachedData, field, field_label);
 			        		}
 			        	});
@@ -29,27 +28,55 @@
 	    	}
 
 	    	var drawGraph = function(data, field, field_label) {
-	    		console.log(data);
 	    		var date_labels = [];
 		       	var weekly_data = {};
+		       	var cumulative_data = {};
 	    		data.forEach(function(e, i) {
     				console.log(e.start_date);
     				date_labels.push([e.start_date]);
     				// console.log(e.stats.player_stats);
     				e.stats.player_stats.forEach(function(player) {
+    					console.log(i);
     					var label = player.name + ' ' + field_label;
     					if (!(weekly_data.hasOwnProperty(label))) {
     						weekly_data[label] = [];
+    					}
+    					if (!(cumulative_data.hasOwnProperty(label))) {
+    						cumulative_data[label] = [];
+    						cumulative_data[label][i] = player[field];
+    						// debugger;
+    					} else {
+    						// debugger;
+	    					cumulative_data[label][i] = player[field] + cumulative_data[label][i-1];
+	    					// console.log(cumulative_data);
     					}
     					weekly_data[label].push([i, player[field]]);
     				});
     			});
 
+    			var better_cumulative_data = [];
+    			for (var key in cumulative_data) {
+    				if (cumulative_data.hasOwnProperty(key)) {
+    					var data = cumulative_data[key];
+    					var list = [];
+    					for (var key2 in data) {
+    						if (data.hasOwnProperty(key2)) {
+    							list.push([key2, data[key2]]);
+    						}
+    					}
+    					better_cumulative_data[key] = list;
+    				}
+    			}
+
     			var graph_data = [];
-    			console.log(weekly_data);
+    			var colors = ["#FF4646", "#FF9A46", "#36C5C5", "#3EE23E"];
     			for (var label in weekly_data) {
 					if (weekly_data.hasOwnProperty(label)) {
-						graph_data.push({label: label, data: weekly_data[label]});
+						var color = colors.pop();
+						console.log(cumulative_data[label]);
+						console.log(weekly_data[label]);
+						graph_data.push({label: label, data: weekly_data[label], yaxis: 1, color:color});
+						graph_data.push({label: label + ' (cumulative)', data:better_cumulative_data[label], points: {show:true}, yaxis:2, color: color})
 					}
 				}
     			var ticks = [];
@@ -61,6 +88,13 @@
 					xaxis: {
 						ticks: ticks
 					},
+					yaxes: [
+						{},
+						{position:'right'}
+					],
+					legend: {
+						position: 'nw'
+					}
 				});
 	    	}
 

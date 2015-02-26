@@ -155,9 +155,11 @@ class GameCollection():
         end_date = None
         end_date_string = 'Z'
 
+        # cumulative_player_stats = {}
         new_collection = self.filter_by_date(start_date_string, end_date_string)
         stats = new_collection.compute_player_stats()
         weekly_stats.append({'start_date': start_date_string, 'end_date': 'Now', 'stats': stats})
+        # cumulative_player_stats = stats['player_stats']
 
         for i in xrange(6): #6 weeks
             end_date = start_date
