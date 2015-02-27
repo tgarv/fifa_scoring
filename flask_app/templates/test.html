@@ -7,7 +7,7 @@
     <script type="text/javascript">
         $(function () {
         	var cachedData;
-	    	var graphData = function(field, field_label) {
+	    	var graphData = function(field, field_label, is_average) {
 		       	if (!cachedData) {
 		       		var url = "{{ url_for('.get_weekly_stats') }}";
 					{% if all_players %}
@@ -18,16 +18,16 @@
 			        	success: function(data) {
 			        		data = JSON.parse(data);
 			        		cachedData = data;
-			        		drawGraph(cachedData, field, field_label);
+			        		drawGraph(cachedData, field, field_label, is_average);
 			        		}
 			        	});
 		       	} else {
-		       		drawGraph(cachedData, field, field_label);
+		       		drawGraph(cachedData, field, field_label, is_average);
 		       	}
 
 	    	}
 
-	    	var drawGraph = function(data, field, field_label) {
+	    	var drawGraph = function(data, field, field_label, is_average) {
 	    		var date_labels = [];
 		       	var weekly_data = {};
 		       	var cumulative_data = {};
@@ -61,7 +61,13 @@
     					var list = [];
     					for (var key2 in data) {
     						if (data.hasOwnProperty(key2)) {
-    							list.push([key2, data[key2]]);
+    							if (is_average){
+    								console.log(data[key2]);
+    								console.log(key2);
+    								list.push([key2, data[key2]/key2])
+    							} else {
+	    							list.push([key2, data[key2]]);
+    							}
     						}
     					}
     					better_cumulative_data[key] = list;
@@ -102,7 +108,8 @@
 
 	    	$("#stat_selector").on('change', function(e) {
 	    		var selected = $('#stat_selector option:selected');
-	    		graphData(selected.val(), selected.attr('data-label'));
+	    		var is_average = selected.attr('data-average');
+	    		graphData(selected.val(), selected.attr('data-label'), is_average);
 	    	});
 		});
     </script>
@@ -111,13 +118,13 @@
 	<select id="stat_selector">
 		<option value="wins" data-label="Wins">Wins</option>
 		<option value="total_games" data-label="Total Games">Total Games</option>
-		<option value="winning_percentage" data-label="Winning Percentage">Winning Percentage</option>
+		<option value="winning_percentage" data-label="Winning Percentage" data-average="true">Winning Percentage</option>
 		<option value="goals" data-label="Goals">Goals</option>
-		<option value="goals_per_game" data-label="Goals Per Game">Goals Per Game</option>
+		<option value="goals_per_game" data-label="Goals Per Game" data-average="true">Goals Per Game</option>
 		<option value="goals_against" data-label="Goals Against">Goals Against</option>
-		<option value="goals_against_per_game" data-label="Goals Against Per Game">Goals Against Per Game</option>
+		<option value="goals_against_per_game" data-label="Goals Against Per Game" data-average="true">Goals Against Per Game</option>
 		<option value="goal_differential" data-label="Goal Differential">Goal Differential</option>
-		<option value="goal_differential_per_game" data-label="Goal Differential Per Game">Goal Differential Per Game</option>
+		<option value="goal_differential_per_game" data-label="Goal Differential Per Game" data-average="true">Goal Differential Per Game</option>
 	</select>
     <div id="placeholder" style="width:800px;height:400px"></div>
 </body>
