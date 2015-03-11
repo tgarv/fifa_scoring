@@ -41,21 +41,28 @@ class GameCollection():
     def compute_player_stats(self):
         player_results = {}
         team_results = {}
+        club_results = {}
 
         player_names = set()
         team_names = set()
+        club_names = set()
 
         for model in self.models:
             for player in model.home_players + model.away_players:
                 player_names.add(player)
             team_names.add(','.join(sorted(model.away_players)))
             team_names.add(','.join(sorted(model.home_players)))
+            club_names.add(model.home_team)
+            club_names.add(model.away_team)
 
         for name in team_names:
             team_results[name] = {'name': name, 'wins': 0, 'losses': 0, 'ties': 0, 'goals': 0, 'goals_against': 0}
 
         for name in player_names:
             player_results[name] = {'name': name, 'wins': 0, 'losses': 0, 'ties': 0, 'goals': 0, 'goals_against': 0}
+
+        for name in club_names:
+            club_results[name] = {'name': name, 'wins': 0, 'losses': 0, 'ties': 0, 'goals': 0, 'goals_against': 0}
 
         for model in self.models:
             winning_players = []
@@ -110,8 +117,35 @@ class GameCollection():
             team_results[home_team_name]['goals'] += model.home_score
             team_results[home_team_name]['goals_against'] += model.away_score
 
+            # Now the same stats for clubs
+            tying_teams = []
+            if model.home_score > model.away_score:
+                winning_club_name = model.home_team
+                losing_club_name = model.away_team
+            elif model.away_score > model.home_score:
+                winning_club_name = model.away_team
+                losing_club_name = model.home_team
+            else:
+                tying_teams = [model.away_team, model.home_team]
+
+            if winning_club_name:
+                club_results[winning_club_name]['wins'] += 1
+            if losing_club_name:
+                club_results[losing_club_name]['losses'] += 1
+
+            for team in tying_teams:
+                club_results[team]['ties'] += 1
+
+            away_team_name = model.away_team
+            home_team_name = model.home_team
+
+            club_results[away_team_name]['goals'] += model.away_score
+            club_results[away_team_name]['goals_against'] += model.home_score
+            club_results[home_team_name]['goals'] += model.home_score
+            club_results[home_team_name]['goals_against'] += model.away_score
+
         # Now compute some aggregate stats like goals per game etc.
-        for group in [team_results, player_results]:
+        for group in [team_results, player_results, club_results]:
             for name, stats in group.iteritems():
                 total_games = stats['wins'] + stats['losses'] + stats['ties']
                 winning_percentage = float(stats['wins']) / total_games
@@ -129,13 +163,17 @@ class GameCollection():
 
         player_results_list = []
         team_results_list = []
+        club_results_list = []
         for item in player_results.values():
             player_results_list.append(item)
 
         for item in team_results.values():
             team_results_list.append(item)
 
-        return {'player_stats': player_results_list, 'team_stats': team_results_list}
+        for item in club_results.values():
+            club_results_list.append(item)
+
+        return {'player_stats': player_results_list, 'team_stats': team_results_list, 'club_stats': club_results_list}
 
     def filter_by_date(self, start_date='0', end_date='Z'):
         new_models = []

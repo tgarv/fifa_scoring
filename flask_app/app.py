@@ -34,7 +34,7 @@ def create_app(settings_key='dev'):
         # print len(gc.filter_by_players(['Jon', 'CT'], False).models)
         stats = gc.compute_player_stats()
 
-        return render_template('index.html', player_results=stats['player_stats'], team_results=stats['team_stats'], game_history=gc)
+        return render_template('index.html', player_results=stats['player_stats'], team_results=stats['team_stats'], club_results=stats['club_stats'], game_history=gc)
 
     @app.route('/get_weekly_stats')
     def get_weekly_stats():

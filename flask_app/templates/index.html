@@ -53,7 +53,7 @@
     </form>
     <div class="table_wrapper">
     <table id="player_results" class="display fl" cellspacing="0">
-        <caption>Indvidual Player Records</caption>
+        <caption>Indvidual Player Stats</caption>
         <thead>
             <tr>
                 <th>Name</th>
@@ -92,7 +92,7 @@
     </div>
     <div class="table_wrapper">
     <table id="team_results" class="display fl" cellspacing="0">
-        <caption>Team Records</caption>
+        <caption>Team Stats</caption>
         <thead>
             <tr>
                 <th>Name</th>
@@ -113,7 +113,7 @@
             {% for team in team_results %}
             <tr>
                 <td>{{team['name']}}</td>
-                <td>{{team['games_played']}}</td>
+                <td>{{team['total_games']}}</td>
                 <td>{{team['winning_percentage']|round(2)}}</td>
                 <td>{{team['wins']}}</td>
                 <td>{{team['losses']}}</td>
@@ -124,6 +124,45 @@
                 <td>{{team['goals_against_per_game']|round(2)}}</td>
                 <td>{{team['goal_differential']}}</td>
                 <td>{{team['goal_differential_per_game']|round(2)}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <div class="table_wrapper">
+    <table id="club_results" class="display fl" cellspacing="0">
+        <caption>Club Stats</caption>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Games Played</th>
+                <th>Winning Percentage</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Ties</th>
+                <th>Goals For (GF)</th>
+                <th>GF Per Game</th>
+                <th>Goals Against (GA)</th>
+                <th>GA Per Game</th>
+                <th>Goal Differential</th>
+                <th>GD Per Game</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in club_results %}
+            <tr>
+                <td>{{club['name']}}</td>
+                <td>{{club['total_games']}}</td>
+                <td>{{club['winning_percentage']|round(2)}}</td>
+                <td>{{club['wins']}}</td>
+                <td>{{club['losses']}}</td>
+                <td>{{club['ties']}}</td>
+                <td>{{club['goals']}}</td>
+                <td>{{club['goals_per_game']|round(2)}}</td>
+                <td>{{club['goals_against']}}</td>
+                <td>{{club['goals_against_per_game']|round(2)}}</td>
+                <td>{{club['goal_differential']}}</td>
+                <td>{{club['goal_differential_per_game']|round(2)}}</td>
             </tr>
             {% endfor %}
         </tbody>

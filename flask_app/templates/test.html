@@ -36,7 +36,6 @@
     				date_labels.push([e.start_date]);
     				// console.log(e.stats.player_stats);
     				e.stats.player_stats.forEach(function(player) {
-    					console.log(i);
     					var label = player.name + ' ' + field_label;
     					if (!(weekly_data.hasOwnProperty(label))) {
     						weekly_data[label] = [];
@@ -62,9 +61,11 @@
     					for (var key2 in data) {
     						if (data.hasOwnProperty(key2)) {
     							if (is_average){
+    								var divisor = parseInt(key2) + 1;
+    								console.log(divisor);
     								console.log(data[key2]);
-    								console.log(key2);
-    								list.push([key2, data[key2]/key2])
+    								console.log(key + ' ' + key2 + ' ' + data[key2] / divisor);
+    								list.push([key2, data[key2]/divisor])
     							} else {
 	    							list.push([key2, data[key2]]);
     							}
@@ -79,8 +80,6 @@
     			for (var label in weekly_data) {
 					if (weekly_data.hasOwnProperty(label)) {
 						var color = colors.pop();
-						console.log(cumulative_data[label]);
-						console.log(weekly_data[label]);
 						graph_data.push({label: label, data: weekly_data[label], yaxis: 1, color:color});
 						graph_data.push({label: label + ' (cumulative)', data:better_cumulative_data[label], points: {show:true}, yaxis:2, color: color})
 					}
@@ -109,6 +108,7 @@
 	    	$("#stat_selector").on('change', function(e) {
 	    		var selected = $('#stat_selector option:selected');
 	    		var is_average = selected.attr('data-average');
+	    		is_average = false;// This isn't working
 	    		graphData(selected.val(), selected.attr('data-label'), is_average);
 	    	});
 		});
