@@ -4,9 +4,11 @@
     <title>FIFA Results</title>
     <script src="{{ url_for('static', filename='scripts/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/jquery-ui/jquery-ui.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/main.js') }}"></script>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/main.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/jquery.dataTables.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/jquery-ui.css') }}">
 </head>
 <body>
     <!--<a href="im:<sip:jparsons@wayfair.com><sip:aballantine@wayfair.com><sip:thare@wayfair.com>">Open Game IM</a>-->
@@ -41,7 +43,7 @@
     <br/>
     <h2>Add game results</h2>
     <form action="{{ url_for('add_game') }}" method="post">
-        <input type="text" name="date" placeholder="date"></input><br/>
+        <input type="text" name="date" placeholder="date" class="datepicker"></input><br/>
         <input type="text" name="home_team" placeholder="home team"></input><br/>
         <input type="text" name="home_players" placeholder="player1,player2"></input><br/>
         <input type="text" name="home_score" placeholder="home score"></input><br/>
