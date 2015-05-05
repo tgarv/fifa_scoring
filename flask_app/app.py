@@ -27,7 +27,7 @@ def create_app(settings_key='dev'):
         gc = GameCollection()
         gc.populate(game_history)
         if all_players:
-            gc = gc.filter_by_players(['DT','Jon','Alistair','CT'])
+            gc = gc.filter_by_players(['DT','Jon','Alistair','CT'], True, True)
         # print len(gc.filter_by_players(['DT','Jon','Alistair','CT']).models)
         # print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
         # print len(gc.filter_by_players(['CT'], False).models)
@@ -48,7 +48,7 @@ def create_app(settings_key='dev'):
         gc.populate(game_history)
         print request.args
         if request.args.get('all_players', False):
-            gc = gc.filter_by_players(['DT','Jon','Alistair','CT'])
+            gc = gc.filter_by_players(['DT','Jon','Alistair','CT'], True, True)
 
         return json.dumps(gc.get_weekly_stats())
 

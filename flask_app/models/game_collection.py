@@ -21,12 +21,15 @@ class GameCollection():
     # If exclusive is False, we'll look for games that have all of the players in players and possibly others
     # e.g. if you want all games that 'Bob' played in, use exclusive = False. If you only want all games that featured
     # 'Bob', 'Jon', and 'Tom' (and no other players), use exclusive = True
-    def filter_by_players(self, players, exclusive=True):
+    def filter_by_players(self, players, exclusive=True, even_teams=False):
         players_set = set(players)
         new_models = []
 
         for model in self.models:
             game_players_set = set(model.home_players + model.away_players)
+            # If we want even teams, filter out games that had different numbers on each team
+            if even_teams and (len(model.home_players) != len(model.away_players)):
+                continue
             if exclusive:
                 if game_players_set == players_set:
                     new_models.append(model)
