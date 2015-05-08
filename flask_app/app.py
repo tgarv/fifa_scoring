@@ -32,6 +32,8 @@ def create_app(settings_key='dev'):
         # print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
         # print len(gc.filter_by_players(['CT'], False).models)
         # print len(gc.filter_by_players(['Jon', 'CT'], False).models)
+        if request.args.get('unique_teams', False):
+            gc = gc.remove_duplicate_club_games()
         stats = gc.compute_player_stats()
 
         return render_template('index.html', player_results=stats['player_stats'], team_results=stats['team_stats'], club_results=stats['club_stats'], game_history=gc)

@@ -215,3 +215,15 @@ class GameCollection():
         # Go from past to present
         weekly_stats = weekly_stats[::-1]
         return weekly_stats
+
+    # This will remove games that have the same team for home and away (useful
+    # for computing club stats)
+    def remove_duplicate_club_games(self):
+        new_models = []
+        for model in self.models:
+            if model.away_team != model.home_team:
+                new_models.append(model)
+
+        c = GameCollection()
+        c.models = new_models
+        return c
