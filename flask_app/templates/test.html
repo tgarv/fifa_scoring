@@ -4,9 +4,11 @@
     <title>FIFA Results</title>
     <script src="{{ url_for('static', filename='scripts/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/jquery.flot.js') }}"></script>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/main.css') }}">
     <script type="text/javascript">
         $(function () {
         	var cachedData;
+        	var plot;
 	    	var graphData = function(field, field_label, is_average) {
 		       	if (!cachedData) {
 		       		var url = "{{ url_for('.get_weekly_stats') }}";
@@ -81,11 +83,12 @@
 
     			var graph_data = [];
     			var colors = ["#FF4646", "#FF9A46", "#36C5C5", "#3EE23E"];
+    			var index = 0;
     			for (var label in weekly_data) {
 					if (weekly_data.hasOwnProperty(label)) {
 						var color = colors.pop();
-						graph_data.push({label: label, data: weekly_data[label], yaxis: 1, color:color});
-						graph_data.push({label: label + ' (cumulative)', data:better_cumulative_data[label], points: {show:true}, yaxis:2, color: color})
+						graph_data.push({label: label, data: weekly_data[label], yaxis: 1, color:color, index: index++, type: "line"});
+						graph_data.push({label: label + ' (cumulative)', data:better_cumulative_data[label], points: {show:true}, yaxis:2, color: color, index: index++, type: "point"})
 					}
 				}
     			var ticks = [];
@@ -93,7 +96,9 @@
     				ticks.push([i, date_labels[i]]);
     			}
 
-				$.plot("#placeholder", graph_data, {
+    			console.log(graph_data);
+
+				plot = $.plot("#placeholder", graph_data, {
 					xaxis: {
 						ticks: ticks
 					},
@@ -102,8 +107,39 @@
 						{position:'right'}
 					],
 					legend: {
-						position: 'nw'
+						position: 'nw',
+						noColumns: 2,
+						container: $("#legend"),
+						labelFormatter: function(label, series) {
+							console.log(label);
+							console.log(series.index);
+							return '<span class="legend_toggle" data-index="' + series.index + '" data-type="' + series.type + '">' + label + '</span>';
+						}
 					}
+				});
+
+				// When a data series is clicked in the legend, toggle the visibility
+				// of the corresponding data points on the graph
+				$("span[class^='legend_toggle']").on('click', function(e) {
+					var target = $(e.currentTarget);
+					var index = target.attr('data-index');
+					var type = target.attr('data-type');
+
+					console.log(type);
+					data = plot.getData();
+					if (type === "line") {
+						data[index].lines.show = !data[index].lines.show;
+					} else if (type === "point") {
+						data[index].points.show = !data[index].points.show;
+					} else {
+						console.log('IDK WHAT TYPE');
+					}
+
+					var colorBox = target.parent().prev('.legendColorBox');
+					// colorBox.toggleClass('mask');
+
+					plot.setData(data);
+					plot.draw();
 				});
 	    	}
 
@@ -130,6 +166,7 @@
 		<option value="goal_differential" data-label="Goal Differential">Goal Differential</option>
 		<option value="goal_differential_per_game" data-label="Goal Differential Per Game" data-average="true">Goal Differential Per Game</option>
 	</select>
+	<div id="legend"></div>
     <div id="placeholder" style="width:1000px;height:500px"></div>
 </body>
 </html>

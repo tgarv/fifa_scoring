@@ -2,3 +2,8 @@
 .fl {float: left;}
 .fr {float: right;}
 .form_spacer {width: 250px;}
+.legend_toggle:hover {cursor: pointer;}
+.mask {
+    background-color: #AAAAAA;
+    opacity: 0.5;
+}
