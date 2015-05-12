@@ -188,7 +188,7 @@ class GameCollection():
         gc.models = new_models
         return gc
 
-    def get_weekly_stats(self):
+    def get_weekly_stats(self, weeks=6):
         weekly_stats = []
         today = datetime.date.today()
         start_date = today + datetime.timedelta(days=(0-today.weekday()))
@@ -202,7 +202,7 @@ class GameCollection():
         weekly_stats.append({'start_date': start_date_string, 'end_date': 'Now', 'stats': stats})
         # cumulative_player_stats = stats['player_stats']
 
-        for i in xrange(6): #6 weeks
+        for i in xrange(weeks):
             end_date = start_date
             start_date = start_date - datetime.timedelta(days=7)
             end_date_string = end_date.isoformat()

@@ -1,0 +1,20 @@
+/
+Main view
+params
+all_players: if True, we'll limit to games that have full teams (i.e. no 1v1 or 2v1 games)
+start_date: get games dating back to this date
+            formatted like YYYY-MM-DD
+start_date: get games up until this date
+            formatted like YYYY-MM-DD
+unique_teams: if True, we won't include games that feature the same club on both teams (e.g.
+              won't show Arsenal vs Arsenal). This is useful for calculating team stats.
+
+
+/test
+Renders a graph showing stats for the last X weeks (both by week and cumulative)
+params
+all_players: if True, we'll limit to games that have full teams (i.e. no 1v1 or 2v1 games)
+            formatted like YYYY-MM-DD
+start_date: get games up until this date
+            formatted like YYYY-MM-DD
+weeks: the number of weeks of data to fetch

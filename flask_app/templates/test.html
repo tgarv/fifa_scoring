@@ -10,9 +10,13 @@
 	    	var graphData = function(field, field_label, is_average) {
 		       	if (!cachedData) {
 		       		var url = "{{ url_for('.get_weekly_stats') }}";
+		       		url += '?';
 					{% if all_players %}
-				        url += "?all_players=true";
+				        url += "&all_players=true";
 				    {% endif %}
+				    {% if weeks %}
+					    url += "&weeks=" + {{weeks}};
+					{% endif %}
 			        $.ajax(
 			        	{url: url,
 			        	success: function(data) {
@@ -126,6 +130,6 @@
 		<option value="goal_differential" data-label="Goal Differential">Goal Differential</option>
 		<option value="goal_differential_per_game" data-label="Goal Differential Per Game" data-average="true">Goal Differential Per Game</option>
 	</select>
-    <div id="placeholder" style="width:800px;height:400px"></div>
+    <div id="placeholder" style="width:1000px;height:500px"></div>
 </body>
 </html>

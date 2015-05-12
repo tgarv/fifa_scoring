@@ -42,6 +42,7 @@ def create_app(settings_key='dev'):
     def get_weekly_stats():
         start_date = request.args.get('start_date', '0')
         end_date = request.args.get('end_date', 'Z')
+        weeks = int(request.args.get('weeks', 6))
         cursor = get_cursor()
         cursor.execute(queries.game_history_query, (start_date, end_date))
         game_history = cursor.fetchall()
@@ -52,7 +53,7 @@ def create_app(settings_key='dev'):
         if request.args.get('all_players', False):
             gc = gc.filter_by_players(['DT','Jon','Alistair','CT'], True, True)
 
-        return json.dumps(gc.get_weekly_stats())
+        return json.dumps(gc.get_weekly_stats(weeks))
 
     @app.route('/add_game', methods=['POST'])
     def add_game():
@@ -75,7 +76,8 @@ def create_app(settings_key='dev'):
 
     @app.route('/test')
     def test():
-        return render_template('test.html', all_players=request.args.get('all_players', False))
+        weeks = int(request.args.get('weeks', 6))
+        return render_template('test.html', all_players=request.args.get('all_players', False), weeks=weeks)
 
     def get_connection():
         return db.connect('us-cdbr-iron-east-01.cleardb.net', 'b6a8bbd0db6ff6', '02c55634', 'heroku_4257da2e9f87a35', cursorclass=MySQLdb.cursors.DictCursor)
