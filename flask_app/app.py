@@ -28,10 +28,16 @@ def create_app(settings_key='dev'):
         gc.populate(game_history)
         if all_players:
             gc = gc.filter_by_players(['DT','Jon','Alistair','CT'], True, True)
-        # print len(gc.filter_by_players(['DT','Jon','Alistair','CT']).models)
-        # print len(gc.filter_by_players(['DT','Jon','Alistair']).models)
-        # print len(gc.filter_by_players(['CT'], False).models)
-        # print len(gc.filter_by_players(['Jon', 'CT'], False).models)
+
+        # This section lets us filter by matchups, e.g. player 'A' on one team and
+        # player 'B' on the other
+        # exclusive_matchup means ONLY those players. Otherwise they can have teammates and stuff
+        team_1_players = request.args.getlist('team_1')
+        team_2_players = request.args.getlist('team_2')
+        exclusive_matchup = request.args.get('exclusive_matchup', False)
+
+        gc = gc.filter_by_matchup(team_1_players, team_2_players, exclusive_matchup)
+
         if request.args.get('unique_teams', False):
             gc = gc.remove_duplicate_club_games()
         stats = gc.compute_player_stats()

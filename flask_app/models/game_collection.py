@@ -41,6 +41,31 @@ class GameCollection():
         c.models = new_models
         return c
 
+    # Filters models to only games where the players on team_1 were against the players on team_2
+    # If exclusive is True, they can't have additional teammates (only the listed players were in the games)
+    def filter_by_matchup(self, team_1, team_2, exclusive=True):
+        players_set_1 = set(team_1)
+        players_set_2 = set(team_2)
+        new_models = []
+
+        for model in self.models:
+            away_players_set = set(model.away_players)
+            home_players_set = set(model.home_players)
+
+            if exclusive:
+                if ((players_set_1 == away_players_set) and (players_set_2 == home_players_set)
+                    or (players_set_2 == away_players_set) and (players_set_1 == home_players_set)):
+                    new_models.append(model)
+            else:
+                if ((players_set_1.issubset(away_players_set)) and (players_set_2.issubset(home_players_set))
+                    or (players_set_2.issubset(away_players_set)) and (players_set_1.issubset(home_players_set))):
+                    new_models.append(model)
+
+        c = GameCollection()
+        c.models = new_models
+        return c
+
+
     def compute_player_stats(self):
         player_results = {}
         team_results = {}
@@ -120,6 +145,7 @@ class GameCollection():
             team_results[home_team_name]['goals'] += model.home_score
             team_results[home_team_name]['goals_against'] += model.away_score
 
+            winning_club_name = losing_club_name = None
             # Now the same stats for clubs
             tying_teams = []
             if model.home_score > model.away_score:
